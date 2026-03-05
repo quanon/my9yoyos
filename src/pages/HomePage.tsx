@@ -44,7 +44,7 @@ export default function HomePage() {
 
       <div className="btm-nav-label">
         <span className="badge badge-lg badge-neutral">
-          {filledCount} / {SLOT_COUNT} 選択済み
+          {filledCount} of {SLOT_COUNT} Selected
         </span>
       </div>
     </div>
