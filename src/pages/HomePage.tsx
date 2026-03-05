@@ -74,7 +74,11 @@ export default function HomePage() {
   const handleShare = useCallback(async () => {
     if (!gridRef.current) return
     // call twice: first pass caches resources, second renders correctly
-    const options = { pixelRatio: 2, skipAutoScale: true }
+    const options = {
+      pixelRatio: 2,
+      skipAutoScale: true,
+      filter: (node: HTMLElement) => !node.hasAttribute?.('data-html2image-ignore'),
+    }
     await toBlob(gridRef.current, options)
     const blob = await toBlob(gridRef.current, options)
     if (!blob) return
