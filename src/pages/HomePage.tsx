@@ -1,10 +1,10 @@
 import { useState, useCallback, useRef } from 'react'
 import { toBlob } from 'html-to-image'
 import YoyoGrid from '../components/YoyoGrid'
+import ImageCropModal from '../components/ImageCropModal'
 
 const SLOT_COUNT = 9
 
-// Convert a File to a base64 data URL so html-to-image can render it
 function fileToDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
@@ -31,13 +31,27 @@ export default function HomePage() {
   const [slots, setSlots] = useState<(string | null)[]>(Array(SLOT_COUNT).fill(null))
   const gridRef = useRef<HTMLDivElement>(null)
 
+  // crop modal state
+  const [cropImage, setCropImage] = useState<string | null>(null)
+  const [cropTargetIndex, setCropTargetIndex] = useState<number>(0)
+
   const handleImageSelect = useCallback(async (index: number, file: File) => {
     const dataUrl = await fileToDataUrl(file)
+    setCropTargetIndex(index)
+    setCropImage(dataUrl)
+  }, [])
+
+  const handleCropConfirm = useCallback((croppedDataUrl: string) => {
     setSlots((prev) => {
       const next = [...prev]
-      next[index] = dataUrl
+      next[cropTargetIndex] = croppedDataUrl
       return next
     })
+    setCropImage(null)
+  }, [cropTargetIndex])
+
+  const handleCropCancel = useCallback(() => {
+    setCropImage(null)
   }, [])
 
   const handleRemove = useCallback((index: number) => {
@@ -85,6 +99,14 @@ export default function HomePage() {
       >
         {mobile ? '共有' : '画像を保存'}
       </button>
+
+      {cropImage && (
+        <ImageCropModal
+          imageSrc={cropImage}
+          onConfirm={handleCropConfirm}
+          onCancel={handleCropCancel}
+        />
+      )}
     </div>
   )
 }
