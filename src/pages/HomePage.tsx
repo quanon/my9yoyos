@@ -73,7 +73,10 @@ export default function HomePage() {
 
   const handleShare = useCallback(async () => {
     if (!gridRef.current) return
-    const blob = await toBlob(gridRef.current, { pixelRatio: 2 })
+    // call twice: first pass caches resources, second renders correctly
+    const options = { pixelRatio: 2, skipAutoScale: true }
+    await toBlob(gridRef.current, options)
+    const blob = await toBlob(gridRef.current, options)
     if (!blob) return
 
     if (isMobile() && navigator.share && navigator.canShare?.({ files: [new File([blob], 'my9yoyos.png', { type: 'image/png' })] })) {
