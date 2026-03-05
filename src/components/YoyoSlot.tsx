@@ -27,7 +27,7 @@ export default function YoyoSlot({ index, imageUrl, onImageSelect, onRemove }: P
       onClick={handleClick}
     >
       {/* slot number badge */}
-      <span className="absolute top-1 left-1 z-10 badge badge-sm badge-neutral opacity-80">
+      <span data-html2image-ignore className="absolute top-1 left-1 z-10 badge badge-sm badge-neutral opacity-80">
         {index + 1}
       </span>
 
