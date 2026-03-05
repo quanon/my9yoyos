@@ -96,8 +96,8 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-base-200 flex flex-col items-center px-4 py-8 gap-6">
       <div className="text-center">
-        <h1 className="text-3xl font-bold">私を構成する 9 つのヨーヨー</h1>
-        <p className="text-base-content/60 mt-2">大好きなヨーヨーをみんなにシェアしよう 🪀</p>
+        <h1 className="text-2xl font-bold">私を構成する 9 つのヨーヨー</h1>
+        <p className="text-sm text-base-content/60 mt-2">大好きなヨーヨーをみんなにシェアしよう 🪀</p>
       </div>
 
       <YoyoGrid ref={gridRef} slots={slots} onImageSelect={handleImageSelect} onRemove={handleRemove} />
@@ -109,11 +109,11 @@ export default function HomePage() {
           checked={cropEnabled}
           onChange={(e) => setCropEnabled(e.target.checked)}
         />
-        <span className="label-text">画像を切り抜く</span>
+        <span className="label-text text-xs">画像を切り抜く</span>
       </label>
 
       <div>
-        <span className="badge badge-lg badge-neutral">
+        <span className="badge badge-sm badge-neutral">
           {filledCount} of {SLOT_COUNT} Selected
         </span>
       </div>
