@@ -7,18 +7,21 @@ type Props = {
   onCancel: () => void
 }
 
-// Extract the cropped area from the image using canvas
+// Extract the cropped area and resize to keep data URL small
+const MAX_OUTPUT_SIZE = 512
+
 function getCroppedImage(imageSrc: string, crop: Area): Promise<string> {
   return new Promise((resolve, reject) => {
     const image = new Image()
     image.onload = () => {
+      const size = Math.min(crop.width, crop.height, MAX_OUTPUT_SIZE)
       const canvas = document.createElement('canvas')
-      canvas.width = crop.width
-      canvas.height = crop.height
+      canvas.width = size
+      canvas.height = size
       const ctx = canvas.getContext('2d')
       if (!ctx) return reject(new Error('Canvas context unavailable'))
-      ctx.drawImage(image, crop.x, crop.y, crop.width, crop.height, 0, 0, crop.width, crop.height)
-      resolve(canvas.toDataURL('image/png'))
+      ctx.drawImage(image, crop.x, crop.y, crop.width, crop.height, 0, 0, size, size)
+      resolve(canvas.toDataURL('image/jpeg', 0.85))
     }
     image.onerror = reject
     image.src = imageSrc
