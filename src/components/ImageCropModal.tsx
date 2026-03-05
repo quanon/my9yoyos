@@ -43,7 +43,7 @@ export default function ImageCropModal({ imageSrc, onConfirm, onCancel }: Props)
   return (
     <dialog className="modal modal-open">
       <div className="modal-box max-w-sm p-4 flex flex-col gap-4">
-        <h3 className="font-bold text-lg">画像を切り抜き</h3>
+        <h3 className="font-bold text-lg">画像を切り抜く</h3>
 
         <div className="relative w-full aspect-square bg-black rounded-lg overflow-hidden">
           <Cropper

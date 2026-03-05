@@ -30,6 +30,7 @@ function downloadBlob(blob: Blob) {
 export default function HomePage() {
   const [slots, setSlots] = useState<(string | null)[]>(Array(SLOT_COUNT).fill(null))
   const gridRef = useRef<HTMLDivElement>(null)
+  const [cropEnabled, setCropEnabled] = useState(true)
 
   // crop modal state
   const [cropImage, setCropImage] = useState<string | null>(null)
@@ -37,9 +38,17 @@ export default function HomePage() {
 
   const handleImageSelect = useCallback(async (index: number, file: File) => {
     const dataUrl = await fileToDataUrl(file)
-    setCropTargetIndex(index)
-    setCropImage(dataUrl)
-  }, [])
+    if (cropEnabled) {
+      setCropTargetIndex(index)
+      setCropImage(dataUrl)
+    } else {
+      setSlots((prev) => {
+        const next = [...prev]
+        next[index] = dataUrl
+        return next
+      })
+    }
+  }, [cropEnabled])
 
   const handleCropConfirm = useCallback((croppedDataUrl: string) => {
     setSlots((prev) => {
@@ -85,6 +94,16 @@ export default function HomePage() {
       </div>
 
       <YoyoGrid ref={gridRef} slots={slots} onImageSelect={handleImageSelect} onRemove={handleRemove} />
+
+      <label className="label cursor-pointer gap-2">
+        <input
+          type="checkbox"
+          className="checkbox checkbox-sm"
+          checked={cropEnabled}
+          onChange={(e) => setCropEnabled(e.target.checked)}
+        />
+        <span className="label-text">画像を切り抜く</span>
+      </label>
 
       <div>
         <span className="badge badge-lg badge-neutral">
