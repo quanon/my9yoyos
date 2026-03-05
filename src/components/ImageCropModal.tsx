@@ -69,7 +69,7 @@ export default function ImageCropModal({ imageSrc, onConfirm, onCancel }: Props)
 
         <div className="modal-action mt-0">
           <button className="btn btn-ghost" onClick={onCancel}>キャンセル</button>
-          <button className="btn btn-primary" onClick={handleConfirm}>決定</button>
+          <button className="btn btn-primary" onClick={handleConfirm}>OK</button>
         </div>
       </div>
       <form method="dialog" className="modal-backdrop">

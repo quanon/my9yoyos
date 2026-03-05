@@ -34,9 +34,9 @@ export default function YoyoSlot({ index, imageUrl, onImageSelect, onRemove }: P
       {imageUrl ? (
         <>
           <img src={imageUrl} alt={`slot ${index + 1}`} className="w-full h-full object-cover" />
-          {/* remove button shown on hover */}
+          {/* remove button: always visible on mobile, hover on desktop */}
           <button
-            className="absolute top-1 right-1 z-10 btn btn-xs btn-circle btn-error opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute top-1 right-1 z-10 btn btn-xs btn-circle btn-error opacity-70 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
             onClick={(e) => { e.stopPropagation(); onRemove(index) }}
             aria-label="削除"
           >
