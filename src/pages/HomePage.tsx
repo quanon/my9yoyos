@@ -1,20 +1,28 @@
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { toBlob } from 'html-to-image'
 import YoyoGrid from '../components/YoyoGrid'
 
 const SLOT_COUNT = 9
 
+// Convert a File to a base64 data URL so html-to-image can render it
+function fileToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result as string)
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+
 export default function HomePage() {
   const [slots, setSlots] = useState<(string | null)[]>(Array(SLOT_COUNT).fill(null))
   const gridRef = useRef<HTMLDivElement>(null)
 
-  // revoke old object URLs to avoid memory leaks
-  const handleImageSelect = useCallback((index: number, file: File) => {
-    const url = URL.createObjectURL(file)
+  const handleImageSelect = useCallback(async (index: number, file: File) => {
+    const dataUrl = await fileToDataUrl(file)
     setSlots((prev) => {
       const next = [...prev]
-      if (next[index]) URL.revokeObjectURL(next[index]!)
-      next[index] = url
+      next[index] = dataUrl
       return next
     })
   }, [])
@@ -22,16 +30,10 @@ export default function HomePage() {
   const handleRemove = useCallback((index: number) => {
     setSlots((prev) => {
       const next = [...prev]
-      if (next[index]) URL.revokeObjectURL(next[index]!)
       next[index] = null
       return next
     })
   }, [])
-
-  // cleanup all object URLs on unmount
-  useEffect(() => {
-    return () => { slots.forEach((url) => url && URL.revokeObjectURL(url)) }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleShare = useCallback(async () => {
     if (!gridRef.current) return
