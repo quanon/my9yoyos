@@ -14,6 +14,19 @@ function fileToDataUrl(file: File): Promise<string> {
   })
 }
 
+function isMobile() {
+  return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+}
+
+function downloadBlob(blob: Blob) {
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'my9yoyos.png'
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 export default function HomePage() {
   const [slots, setSlots] = useState<(string | null)[]>(Array(SLOT_COUNT).fill(null))
   const gridRef = useRef<HTMLDivElement>(null)
@@ -40,22 +53,15 @@ export default function HomePage() {
     const blob = await toBlob(gridRef.current, { pixelRatio: 2 })
     if (!blob) return
 
-    const file = new File([blob], 'my9yoyos.png', { type: 'image/png' })
-
-    if (navigator.share && navigator.canShare?.({ files: [file] })) {
-      await navigator.share({ files: [file] })
+    if (isMobile() && navigator.share && navigator.canShare?.({ files: [new File([blob], 'my9yoyos.png', { type: 'image/png' })] })) {
+      await navigator.share({ files: [new File([blob], 'my9yoyos.png', { type: 'image/png' })] })
     } else {
-      // fallback: download
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = 'my9yoyos.png'
-      a.click()
-      URL.revokeObjectURL(url)
+      downloadBlob(blob)
     }
   }, [])
 
   const filledCount = slots.filter(Boolean).length
+  const mobile = isMobile()
 
   return (
     <div className="min-h-screen bg-base-200 flex flex-col items-center px-4 py-8 gap-6">
@@ -77,7 +83,7 @@ export default function HomePage() {
         disabled={filledCount === 0}
         onClick={handleShare}
       >
-        共有
+        {mobile ? '共有' : '画像を保存'}
       </button>
     </div>
   )
