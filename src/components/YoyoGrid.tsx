@@ -1,3 +1,4 @@
+import { forwardRef } from 'react'
 import YoyoSlot from './YoyoSlot'
 
 type Props = {
@@ -6,9 +7,9 @@ type Props = {
   onRemove: (index: number) => void
 }
 
-export default function YoyoGrid({ slots, onImageSelect, onRemove }: Props) {
+export default forwardRef<HTMLDivElement, Props>(function YoyoGrid({ slots, onImageSelect, onRemove }, ref) {
   return (
-    <div className="grid grid-cols-3 gap-2 w-full max-w-sm">
+    <div ref={ref} className="grid grid-cols-3 gap-2 w-full max-w-sm bg-base-100 rounded-xl p-3">
       {slots.map((imageUrl, i) => (
         <YoyoSlot
           key={i}
@@ -20,4 +21,4 @@ export default function YoyoGrid({ slots, onImageSelect, onRemove }: Props) {
       ))}
     </div>
   )
-}
+})

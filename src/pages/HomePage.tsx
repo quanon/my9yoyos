@@ -1,10 +1,12 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
+import { toBlob } from 'html-to-image'
 import YoyoGrid from '../components/YoyoGrid'
 
 const SLOT_COUNT = 9
 
 export default function HomePage() {
   const [slots, setSlots] = useState<(string | null)[]>(Array(SLOT_COUNT).fill(null))
+  const gridRef = useRef<HTMLDivElement>(null)
 
   // revoke old object URLs to avoid memory leaks
   const handleImageSelect = useCallback((index: number, file: File) => {
@@ -31,6 +33,26 @@ export default function HomePage() {
     return () => { slots.forEach((url) => url && URL.revokeObjectURL(url)) }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const handleShare = useCallback(async () => {
+    if (!gridRef.current) return
+    const blob = await toBlob(gridRef.current, { pixelRatio: 2 })
+    if (!blob) return
+
+    const file = new File([blob], 'my9yoyos.png', { type: 'image/png' })
+
+    if (navigator.share && navigator.canShare?.({ files: [file] })) {
+      await navigator.share({ files: [file] })
+    } else {
+      // fallback: download
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'my9yoyos.png'
+      a.click()
+      URL.revokeObjectURL(url)
+    }
+  }, [])
+
   const filledCount = slots.filter(Boolean).length
 
   return (
@@ -40,13 +62,21 @@ export default function HomePage() {
         <p className="text-base-content/60 mt-2">大好きなヨーヨーをみんなにシェアしよう 🪀</p>
       </div>
 
-      <YoyoGrid slots={slots} onImageSelect={handleImageSelect} onRemove={handleRemove} />
+      <YoyoGrid ref={gridRef} slots={slots} onImageSelect={handleImageSelect} onRemove={handleRemove} />
 
-      <div className="btm-nav-label">
+      <div>
         <span className="badge badge-lg badge-neutral">
           {filledCount} of {SLOT_COUNT} Selected
         </span>
       </div>
+
+      <button
+        className="btn btn-primary btn-wide"
+        disabled={filledCount === 0}
+        onClick={handleShare}
+      >
+        共有
+      </button>
     </div>
   )
 }
