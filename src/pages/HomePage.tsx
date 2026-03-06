@@ -2,10 +2,10 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 import { toBlob } from 'html-to-image'
 import YoyoGrid from '../components/YoyoGrid'
 import ImageCropModal from '../components/ImageCropModal'
+import { MAX_OUTPUT_SIZE } from '../constants'
 
 const SLOT_COUNT = 9
 const STORAGE_KEY = 'my9yoyos-slots'
-const MAX_OUTPUT_SIZE = 512
 
 function loadSlots(): (string | null)[] {
   try {

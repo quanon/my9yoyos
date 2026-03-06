@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import Cropper, { type Area } from 'react-easy-crop'
+import { MAX_OUTPUT_SIZE } from '../constants'
 
 type Props = {
   imageSrc: string
@@ -8,8 +9,6 @@ type Props = {
 }
 
 // Extract the cropped area and resize to keep data URL small
-const MAX_OUTPUT_SIZE = 512
-
 function getCroppedImage(imageSrc: string, crop: Area): Promise<string> {
   return new Promise((resolve, reject) => {
     const image = new Image()
