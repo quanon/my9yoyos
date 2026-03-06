@@ -1,4 +1,6 @@
 import { useRef } from 'react'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
 type Props = {
   index: number
@@ -9,6 +11,15 @@ type Props = {
 
 export default function YoyoSlot({ index, imageUrl, onImageSelect, onRemove }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useSortable({ id: index })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    // Omit transition to avoid the visual re-swap artifact that occurs
+    // because SortableContext items are fixed indices (not reordered after swap)
+    opacity: isDragging ? 0.4 : 1,
+    zIndex: isDragging ? 10 : undefined,
+  }
 
   const handleClick = () => {
     if (!imageUrl) inputRef.current?.click()
@@ -23,6 +34,10 @@ export default function YoyoSlot({ index, imageUrl, onImageSelect, onRemove }: P
 
   return (
     <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
       className="relative aspect-square rounded-lg overflow-hidden cursor-pointer group bg-base-100 border border-base-300"
       onClick={handleClick}
     >
@@ -38,6 +53,7 @@ export default function YoyoSlot({ index, imageUrl, onImageSelect, onRemove }: P
           <button
             data-html2image-ignore
             className="absolute top-1 right-1 z-10 btn btn-xs btn-circle btn-error opacity-70 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+            onPointerDown={(e) => e.stopPropagation()}
             onClick={(e) => { e.stopPropagation(); onRemove(index) }}
             aria-label="削除"
           >

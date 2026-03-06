@@ -87,6 +87,16 @@ export default function HomePage() {
     })
   }, [])
 
+  const handleReorder = useCallback((fromIndex: number, toIndex: number) => {
+    setSlots((prev) => {
+      const next = [...prev]
+      const temp = next[fromIndex]
+      next[fromIndex] = next[toIndex]
+      next[toIndex] = temp
+      return next
+    })
+  }, [])
+
   const handleShare = useCallback(async () => {
     if (!gridRef.current) return
     // call twice: first pass caches resources, second renders correctly
@@ -116,7 +126,7 @@ export default function HomePage() {
         <p className="text-sm text-base-content/60 mt-2">大好きなヨーヨーをみんなにシェアしよう 🪀</p>
       </div>
 
-      <YoyoGrid ref={gridRef} slots={slots} onImageSelect={handleImageSelect} onRemove={handleRemove} />
+      <YoyoGrid ref={gridRef} slots={slots} onImageSelect={handleImageSelect} onRemove={handleRemove} onReorder={handleReorder} />
 
       <label className="label cursor-pointer gap-2">
         <input
