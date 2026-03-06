@@ -5,6 +5,7 @@ import ImageCropModal from '../components/ImageCropModal'
 
 const SLOT_COUNT = 9
 const STORAGE_KEY = 'my9yoyos-slots'
+const MAX_OUTPUT_SIZE = 512
 
 function loadSlots(): (string | null)[] {
   try {
@@ -23,6 +24,27 @@ function fileToDataUrl(file: File): Promise<string> {
     reader.onload = () => resolve(reader.result as string)
     reader.onerror = reject
     reader.readAsDataURL(file)
+  })
+}
+
+// Resize to fit within MAX_OUTPUT_SIZE on the longest side, maintaining aspect ratio
+function resizeDataUrl(dataUrl: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = () => {
+      const scale = Math.min(MAX_OUTPUT_SIZE / img.width, MAX_OUTPUT_SIZE / img.height, 1)
+      const w = Math.round(img.width * scale)
+      const h = Math.round(img.height * scale)
+      const canvas = document.createElement('canvas')
+      canvas.width = w
+      canvas.height = h
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return reject(new Error('Canvas context unavailable'))
+      ctx.drawImage(img, 0, 0, w, h)
+      resolve(canvas.toDataURL('image/jpeg', 0.85))
+    }
+    img.onerror = reject
+    img.src = dataUrl
   })
 }
 
@@ -62,9 +84,10 @@ export default function HomePage() {
       setCropTargetIndex(index)
       setCropImage(dataUrl)
     } else {
+      const resized = await resizeDataUrl(dataUrl)
       setSlots((prev) => {
         const next = [...prev]
-        next[index] = dataUrl
+        next[index] = resized
         return next
       })
     }
