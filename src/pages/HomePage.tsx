@@ -136,9 +136,14 @@ export default function HomePage() {
         {mobile ? '共有' : '画像を保存'}
       </button>
 
-      <div className="text-center text-sm text-base-content/60 select-all">
+      <a
+        className="text-center text-sm text-base-content/60 hover:text-primary"
+        href={`https://x.com/search?q=${encodeURIComponent('#私を構成する9つのヨーヨー')}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         #私を構成する9つのヨーヨー
-      </div>
+      </a>
 
       {cropImage && (
         <ImageCropModal
