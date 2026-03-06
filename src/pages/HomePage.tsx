@@ -43,7 +43,11 @@ export default function HomePage() {
   const [slots, setSlots] = useState<(string | null)[]>(loadSlots)
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(slots))
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(slots))
+    } catch (e) {
+      console.error('Failed to save slots to localStorage:', e)
+    }
   }, [slots])
   const gridRef = useRef<HTMLDivElement>(null)
   const [cropEnabled, setCropEnabled] = useState(true)
