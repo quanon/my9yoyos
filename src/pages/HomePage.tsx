@@ -48,9 +48,7 @@ function resizeDataUrl(dataUrl: string): Promise<string> {
   })
 }
 
-function isMobile() {
-  return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
-}
+const IS_MOBILE = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
 
 function downloadBlob(blob: Blob) {
   const url = URL.createObjectURL(blob)
@@ -136,7 +134,7 @@ export default function HomePage() {
     const blob = await toBlob(gridRef.current, options)
     if (!blob) return
 
-    if (isMobile() && navigator.share && navigator.canShare?.({ files: [new File([blob], 'my9yoyos.png', { type: 'image/png' })] })) {
+    if (IS_MOBILE && navigator.share && navigator.canShare?.({ files: [new File([blob], 'my9yoyos.png', { type: 'image/png' })] })) {
       await navigator.share({ files: [new File([blob], 'my9yoyos.png', { type: 'image/png' })] })
     } else {
       downloadBlob(blob)
@@ -144,7 +142,7 @@ export default function HomePage() {
   }, [])
 
   const filledCount = slots.filter(Boolean).length
-  const mobile = isMobile()
+  const mobile = IS_MOBILE
 
   return (
     <div className="min-h-screen bg-base-200 flex flex-col items-center px-4 py-8 gap-6">
