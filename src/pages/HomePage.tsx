@@ -136,6 +136,10 @@ export default function HomePage() {
         {mobile ? '共有' : '画像を保存'}
       </button>
 
+      <div className="text-center text-sm text-base-content/60 select-all">
+        #私を構成する9つのヨーヨー
+      </div>
+
       {cropImage && (
         <ImageCropModal
           imageSrc={cropImage}
