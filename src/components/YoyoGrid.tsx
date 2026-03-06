@@ -7,7 +7,7 @@ import {
   closestCenter,
   type DragEndEvent,
 } from '@dnd-kit/core'
-import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable'
+import { SortableContext } from '@dnd-kit/sortable'
 import YoyoSlot from './YoyoSlot'
 
 type Props = {
@@ -19,6 +19,9 @@ type Props = {
 
 // Slot indices are fixed IDs 0-8
 const SLOT_IDS = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+
+// No-op strategy: other slots stay in place while dragging (swap semantics, not insert)
+const noopStrategy = () => null
 
 export default forwardRef<HTMLDivElement, Props>(function YoyoGrid(
   { slots, onImageSelect, onRemove, onReorder },
@@ -40,7 +43,7 @@ export default forwardRef<HTMLDivElement, Props>(function YoyoGrid(
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <SortableContext items={SLOT_IDS} strategy={rectSortingStrategy}>
+      <SortableContext items={SLOT_IDS} strategy={noopStrategy}>
         <div ref={ref} className="grid grid-cols-3 gap-2 w-full max-w-sm bg-base-100 rounded-xl p-3">
           {slots.map((imageUrl, i) => (
             <YoyoSlot
