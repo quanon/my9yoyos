@@ -128,12 +128,6 @@ export default function HomePage() {
         <span className="label-text text-xs">画像を切り抜く</span>
       </label>
 
-      <div>
-        <span className="badge badge-sm badge-neutral">
-          {filledCount} of {SLOT_COUNT} Selected
-        </span>
-      </div>
-
       <button
         className="btn btn-primary btn-wide"
         disabled={filledCount === 0}
