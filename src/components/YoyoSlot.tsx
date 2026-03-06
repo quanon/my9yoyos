@@ -19,6 +19,8 @@ export default function YoyoSlot({ index, imageUrl, onImageSelect, onRemove }: P
     // because SortableContext items are fixed indices (not reordered after swap)
     opacity: isDragging ? 0.4 : 1,
     zIndex: isDragging ? 10 : undefined,
+    // Prevent browser touch handling so pointer events reach @dnd-kit cleanly
+    touchAction: 'none' as const,
   }
 
   const handleClick = () => {
@@ -40,6 +42,7 @@ export default function YoyoSlot({ index, imageUrl, onImageSelect, onRemove }: P
       {...listeners}
       className="relative aspect-square rounded-lg overflow-hidden cursor-pointer group bg-base-100 border border-base-300"
       onClick={handleClick}
+      onContextMenu={(e) => e.preventDefault()}
     >
       {/* slot number badge */}
       <span data-html2image-ignore className="absolute top-1 left-1 z-10 badge badge-sm badge-neutral opacity-80">
@@ -48,7 +51,14 @@ export default function YoyoSlot({ index, imageUrl, onImageSelect, onRemove }: P
 
       {imageUrl ? (
         <>
-          <img src={imageUrl} alt={`slot ${index + 1}`} className="w-full h-full object-cover" />
+          {/* WebkitTouchCallout: none prevents iOS "Save Image" callout on long press */}
+          <img
+            src={imageUrl}
+            alt={`slot ${index + 1}`}
+            className="w-full h-full object-cover select-none"
+            style={{ WebkitTouchCallout: 'none' } as React.CSSProperties}
+            draggable={false}
+          />
           {/* remove button: always visible on mobile, hover on desktop */}
           <button
             data-html2image-ignore
