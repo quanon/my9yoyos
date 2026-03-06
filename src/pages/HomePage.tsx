@@ -1,9 +1,21 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { toBlob } from 'html-to-image'
 import YoyoGrid from '../components/YoyoGrid'
 import ImageCropModal from '../components/ImageCropModal'
 
 const SLOT_COUNT = 9
+const STORAGE_KEY = 'my9yoyos-slots'
+
+function loadSlots(): (string | null)[] {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY)
+    if (saved) {
+      const parsed = JSON.parse(saved)
+      if (Array.isArray(parsed) && parsed.length === SLOT_COUNT) return parsed
+    }
+  } catch { /* ignore */ }
+  return Array(SLOT_COUNT).fill(null)
+}
 
 function fileToDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -28,7 +40,11 @@ function downloadBlob(blob: Blob) {
 }
 
 export default function HomePage() {
-  const [slots, setSlots] = useState<(string | null)[]>(Array(SLOT_COUNT).fill(null))
+  const [slots, setSlots] = useState<(string | null)[]>(loadSlots)
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(slots))
+  }, [slots])
   const gridRef = useRef<HTMLDivElement>(null)
   const [cropEnabled, setCropEnabled] = useState(true)
 
